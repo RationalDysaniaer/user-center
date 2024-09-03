@@ -1,7 +1,6 @@
 package com.dysaniaer.usercenter.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.dysaniaer.usercenter.contant.UserConstant;
 import com.dysaniaer.usercenter.model.domain.User;
 import com.dysaniaer.usercenter.model.request.UserLoginRequest;
 import com.dysaniaer.usercenter.model.request.UserRegisterRequest;
@@ -55,6 +54,20 @@ public class UserController {
         }
         return userService.userLogin(userAccount, userPassword,request);
     }
+
+    @GetMapping("/current")
+    public User getCurrentUser(HttpServletRequest request){
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User currentUser = (User) userObj;
+        if (currentUser == null){
+            return null;
+        }
+        long userId = currentUser.getId();
+        // todo 校验用户是否合法
+        User user = userService.getById(userId);
+        return userService.getSafetyUser(user);
+    }
+
 
     @GetMapping("/search")
     public List<User> searchUsers(String username, HttpServletRequest request) {
