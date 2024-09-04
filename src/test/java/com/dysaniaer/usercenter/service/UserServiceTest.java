@@ -38,37 +38,38 @@ class UserServiceTest {
         String userAccount = "yupi";
         String userPassword = "12345678";
         String checkPassword = "123456789";
-        long result = userService.userResigester(userAccount,userPassword,checkPassword);
+        String planetCode = "1";
+        long result = userService.userResigester(userAccount,userPassword,checkPassword,planetCode);
         Assertions.assertEquals(-1,result);
 
         userAccount = "yu";
         userPassword = "12345678";
         checkPassword = "12345678";
-        result = userService.userResigester(userAccount,userPassword,checkPassword);
+        result = userService.userResigester(userAccount,userPassword,checkPassword,planetCode);
         Assertions.assertEquals(-1,result);
 
         userAccount = "yupi";
         userPassword = "123456";
         checkPassword = "123456";
-        result = userService.userResigester(userAccount,userPassword,checkPassword);
+        result = userService.userResigester(userAccount,userPassword,checkPassword,planetCode);
         Assertions.assertEquals(-1,result);
 
         userAccount = "yu pi";
         userPassword = "12345678";
         checkPassword = "12345678";
-        result = userService.userResigester(userAccount,userPassword,checkPassword);
+        result = userService.userResigester(userAccount,userPassword,checkPassword,planetCode);
         Assertions.assertEquals(-1,result);
 
         userAccount = "dogYupi";
         userPassword = "12345678";
         checkPassword = "12345678";
-        result = userService.userResigester(userAccount,userPassword,checkPassword);
+        result = userService.userResigester(userAccount,userPassword,checkPassword,planetCode);
         Assertions.assertEquals(-1,result);
 
         userAccount = "yupi";
         userPassword = "12345678";
         checkPassword = "12345678";
-        result = userService.userResigester(userAccount,userPassword,checkPassword);
+        result = userService.userResigester(userAccount,userPassword,checkPassword,planetCode);
         Assertions.assertTrue(result > 0);
     }
 }

@@ -78,8 +78,13 @@ public class User implements Serializable {
     /**
      * 是否删除
      */
-    @TableLogic
+    @TableLogic //表示逻辑删除
     private Integer isDelete;
+
+    /**
+     * 星球编号
+     */
+    private String planetCode;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

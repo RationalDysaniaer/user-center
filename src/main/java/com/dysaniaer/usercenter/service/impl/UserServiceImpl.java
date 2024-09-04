@@ -38,9 +38,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
 
     @Override
-    public long userResigester(String userAccount, String userPassword, String checkPassword) {
+    public long userResigester(String userAccount, String userPassword, String checkPassword,String planetCode) {
         //1.校验
-        if(StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)){
+        if(StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, planetCode)){
             //todo 修改为自定义异常
             return -1L;
         }
@@ -50,7 +50,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (userPassword.length() < 8 || !userPassword.equals(checkPassword)){
             return -1L;
         }
-
+        if(planetCode.length() > 5){
+            return -1L;
+        }
         //校验账户不能包含特殊字符
         Pattern pattern=Pattern.compile("^[a-zA-Z0-9]+$");
         //testStr被检测的文本
@@ -69,6 +71,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return -1L;
         }
 
+        //星球编号不能重复
+        queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("planetCode", planetCode);
+        count = userMapper.selectCount(queryWrapper);
+        if (count > 0){
+            return -1L;
+        }
+
         //2.加密
         String encryptPassword =  DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
 
@@ -76,6 +86,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = new User();
         user.setUserAccount(userAccount);
         user.setUserPassword(encryptPassword);
+        user.setPlanetCode(planetCode);
         boolean saveResult = this.save(user);
         if(!saveResult){
             return -1L;
@@ -145,11 +156,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         safetyUser.setAvatarUrl(user.getAvatarUrl());
         safetyUser.setGander(user.getGander());
         safetyUser.setPhone(user.getPhone());
-        safetyUser.setEmail(user.getUserPassword());
+        safetyUser.setEmail(user.getEmail());
         safetyUser.setUserStatus(user.getUserStatus());
         safetyUser.setCreateTime(user.getCreateTime());
         safetyUser.setUserRole(user.getUserRole());
+        safetyUser.setPlanetCode(user.getPlanetCode());
         return safetyUser;
+    }
+
+    /**
+     * 用户注销
+     * @param request
+     * @return
+     */
+    @Override
+    public int userLogout(HttpServletRequest request) {
+        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        return 1;
     }
 }
 
