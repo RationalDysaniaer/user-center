@@ -2,6 +2,8 @@ package com.dysaniaer.usercenter.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.dysaniaer.usercenter.common.ErrorCode;
+import com.dysaniaer.usercenter.exception.BusinessException;
 import com.dysaniaer.usercenter.mapper.UserMapper;
 import com.dysaniaer.usercenter.model.domain.User;
 import com.dysaniaer.usercenter.service.UserService;
@@ -41,17 +43,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public long userResigester(String userAccount, String userPassword, String checkPassword,String planetCode) {
         //1.校验
         if(StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, planetCode)){
-            //todo 修改为自定义异常
-            return -1L;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数为空");
         }
         if (userAccount.length() < 4){
-            return -1L;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户账号过短");
         }
         if (userPassword.length() < 8 || !userPassword.equals(checkPassword)){
-            return -1L;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户密码过短或两次密码不一致");
         }
         if(planetCode.length() > 5){
-            return -1L;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"星球编号过长");
         }
         //校验账户不能包含特殊字符
         Pattern pattern=Pattern.compile("^[a-zA-Z0-9]+$");
@@ -60,7 +61,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //匹配上的时候返回true,匹配不通过返回false
         boolean bool = matcher.matches();
         if (!bool){
-            return -1L;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"账号不能包含特殊字符");
         }
 
         //账户不能重复
@@ -68,7 +69,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         queryWrapper.eq("userAccount", userAccount);
         Long count = userMapper.selectCount(queryWrapper);
         if (count > 0){
-            return -1L;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"账号重复");
         }
 
         //星球编号不能重复
@@ -76,7 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         queryWrapper.eq("planetCode", planetCode);
         count = userMapper.selectCount(queryWrapper);
         if (count > 0){
-            return -1L;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"编号重复");
         }
 
         //2.加密
@@ -89,7 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         user.setPlanetCode(planetCode);
         boolean saveResult = this.save(user);
         if(!saveResult){
-            return -1L;
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"保存用户失败，请重试");
         }
         return user.getId();
     }
@@ -98,13 +99,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         //1.校验
         if(StringUtils.isAnyBlank(userAccount, userPassword)){
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数为空");
         }
         if (userAccount.length() < 4){
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户账号过短");
         }
         if (userPassword.length() < 8){
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户密码过短");
         }
 
         //校验账户不能包含特殊字符
@@ -114,7 +115,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //匹配上的时候返回true,匹配不通过返回false
         boolean bool = matcher.matches();
         if (!bool){
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"账号不能包含特殊字符");
         }
 
         //2.加密
@@ -127,7 +128,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = userMapper.selectOne(queryWrapper);
         if(user == null){
             log.info("user login failed,userAccount cannot match userPassword");
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户名或密码错误");
         }
 
         //3.用户脱敏
@@ -147,7 +148,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public User getSafetyUser(User user){
         if(user == null){
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数为空");
         }
         User safetyUser = new User();
         safetyUser.setId(user.getId());
