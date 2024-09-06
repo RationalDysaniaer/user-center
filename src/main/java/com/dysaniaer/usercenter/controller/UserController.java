@@ -22,7 +22,9 @@ import static com.dysaniaer.usercenter.contant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户接口
- * @author rationaldysaniaer
+ *
+ * @author RationalDysaniaer
+ * @date 2024/9/6 8:16
  */
 @RestController
 @RequestMapping("/user")
@@ -31,6 +33,12 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    /**
+     * 用户注册
+     *
+     * @param userRegisterRequest 用户注册请求体
+     * @return
+     */
     @PostMapping("/register")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
@@ -48,6 +56,13 @@ public class UserController {
         return ResultUtils.success(result);
     }
 
+    /**
+     * 用户登录
+     *
+     * @param userLoginRequest 用户登录请求体
+     * @param request
+     * @return
+     */
     @PostMapping("/login")
     public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
@@ -62,6 +77,12 @@ public class UserController {
         return ResultUtils.success(user);
     }
 
+    /**
+     * 退出登录
+     *
+     * @param request
+     * @return
+     */
     @PostMapping("/logout")
     public BaseResponse<Integer> userLogout(HttpServletRequest request) {
         if (request == null) {
@@ -71,6 +92,12 @@ public class UserController {
         return ResultUtils.success(result);
     }
 
+    /**
+     * 获取当前登录用户
+     *
+     * @param request
+     * @return
+     */
     @GetMapping("/current")
     public BaseResponse<User> getCurrentUser(HttpServletRequest request){
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
@@ -85,7 +112,13 @@ public class UserController {
         return ResultUtils.success(safetyUser);
     }
 
-
+    /**
+     * 获取用户列表
+     *
+     * @param username 用户名
+     * @param request 请求
+     * @return
+     */
     @GetMapping("/search")
     public  BaseResponse<List<User>>  searchUsers(String username, HttpServletRequest request) {
         if(!isAdmin(request)){
@@ -100,6 +133,13 @@ public class UserController {
         return ResultUtils.success(list);
     }
 
+    /**
+     * 删除用户
+     *
+     * @param id
+     * @param request
+     * @return
+     */
     @PostMapping("/delete")
     public BaseResponse<Boolean> deleteUser(@RequestBody long id, HttpServletRequest request) {
         if(!isAdmin(request)){
@@ -114,7 +154,8 @@ public class UserController {
 
 
     /**
-     * 判断是否为管理员
+     * 判断用户是否为管理员
+     *
      * @param request
      * @return
      */

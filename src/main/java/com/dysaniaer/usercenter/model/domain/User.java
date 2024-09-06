@@ -8,11 +8,13 @@ import java.util.Date;
 
 /**
  * 用户
+ *
+ * @author RationalDysaniaer
+ * @date 2024/9/6 8:56
  * @TableName user
  */
 @TableName(value ="user")
 @Data
-//@Builder
 public class User implements Serializable {
     /**
      * id

@@ -4,6 +4,9 @@ import com.dysaniaer.usercenter.common.ErrorCode;
 
 /**
  * 自定义异常类
+ *
+ * @author RationalDysaniaer
+ * @date 2024/9/6 8:54
  */
 public class BusinessException extends RuntimeException{
 

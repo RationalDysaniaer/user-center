@@ -21,6 +21,7 @@ import static com.dysaniaer.usercenter.contant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户服务实现类
+ *
  * @author RationalDysaniaer
  * @description 针对表【user(用户)】的数据库操作Service实现
  * @createDate 2024-08-30 23:23:28
@@ -38,7 +39,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     private static final String SALT = "Dysaniaer";
 
-
+    /**
+     * 用户注册
+     *
+     * @param userAccount 用户账户
+     * @param userPassword 用户密码
+     * @param checkPassword 校验密码
+     * @param planetCode 星球编号
+     * @return 用户id
+     */
     @Override
     public long userResigester(String userAccount, String userPassword, String checkPassword,String planetCode) {
         //1.校验
@@ -56,7 +65,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         //校验账户不能包含特殊字符
         Pattern pattern=Pattern.compile("^[a-zA-Z0-9]+$");
-        //testStr被检测的文本
+        //userAccount为被检测的文本
         Matcher matcher = pattern.matcher(userAccount);
         //匹配上的时候返回true,匹配不通过返回false
         boolean bool = matcher.matches();
@@ -80,7 +89,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"编号重复");
         }
 
-        //2.加密
+        //2.md5加密
         String encryptPassword =  DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
 
         //3.插入数据
@@ -95,6 +104,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return user.getId();
     }
 
+    /**
+     * 用户登录
+     *
+     * @param userAccount  用户账户
+     * @param userPassword 用户密码
+     * @param request       请求
+     * @return 用户
+     */
     @Override
     public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         //1.校验
@@ -110,7 +127,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         //校验账户不能包含特殊字符
         Pattern pattern=Pattern.compile("^[a-zA-Z0-9]+$");
-        //testStr被检测的文本
         Matcher matcher = pattern.matcher(userAccount);
         //匹配上的时候返回true,匹配不通过返回false
         boolean bool = matcher.matches();
@@ -139,6 +155,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return safetyUser;
     }
 
+
+    /**
+     * 退出登录
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public int userLogout(HttpServletRequest request) {
+        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        return 1;
+    }
+
     /**
      * 用户脱敏
      *
@@ -163,17 +192,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         safetyUser.setUserRole(user.getUserRole());
         safetyUser.setPlanetCode(user.getPlanetCode());
         return safetyUser;
-    }
-
-    /**
-     * 用户注销
-     * @param request
-     * @return
-     */
-    @Override
-    public int userLogout(HttpServletRequest request) {
-        request.getSession().removeAttribute(USER_LOGIN_STATE);
-        return 1;
     }
 }
 

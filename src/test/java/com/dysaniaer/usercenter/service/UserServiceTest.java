@@ -9,7 +9,8 @@ import javax.annotation.Resource;
 
 /**
  * 用户服务测试
- * @Author RationalDysaniaer
+ *
+ * @author RationalDysaniaer
  */
 @SpringBootTest
 class UserServiceTest {

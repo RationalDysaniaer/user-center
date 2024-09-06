@@ -6,6 +6,9 @@ import java.io.Serializable;
 
 /**
  * 通用返回类
+ *
+ * @author RationalDysaniaer
+ * @date 2024/9/6 8:52
  * @param <T>
  */
 @Data

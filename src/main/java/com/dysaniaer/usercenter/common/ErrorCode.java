@@ -2,6 +2,9 @@ package com.dysaniaer.usercenter.common;
 
 /**
  * 错误码
+ *
+ * @author RationalDysaniaer
+ * @date 2024/9/6 8:52
  */
 public enum ErrorCode {
     SUCCESS(0, "成功", ""),
@@ -11,6 +14,9 @@ public enum ErrorCode {
     NO_AUTH(40101, "无权限", ""),
     SYSTEM_ERROR(50000, "系统内部异常", "");
 
+    /**
+     * 状态码
+     */
     private final int code;
 
     /**

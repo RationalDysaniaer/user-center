@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * 全局异常处理器
+ *
+ * @author RationalDysaniaer
+ * @date 2024/9/6 8:55
  */
 @RestControllerAdvice
 @Slf4j
